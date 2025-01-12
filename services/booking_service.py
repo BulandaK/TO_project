@@ -1,6 +1,8 @@
 from patterns.observer import Observable
 from patterns.state import PendingState
+from services.car_service import CarBooking
 from services.flight_service import FlightBooking
+from services.hotel_service import HotelBooking
 
 
 class BookingService(Observable):
@@ -26,16 +28,19 @@ class BookingService(Observable):
         return [booking.to_dict() for booking in self.bookings]
 
     def from_dict(self, data):
-        """Przywraca stan systemu rezerwacji."""
-        from services.flight_service import FlightBooking
-        from services.hotel_service import HotelBooking
-        from services.car_service import CarBooking
-
+        """
+        Odtwarza stan rezerwacji na podstawie wczytanych danych.
+        """
         self.bookings = []
-        for item in data:
-            if item["type"] == "flight":
-                self.bookings.append(FlightBooking.from_dict(item))
-            elif item["type"] == "hotel":
-                self.bookings.append(HotelBooking.from_dict(item))
-            elif item["type"] == "car":
-                self.bookings.append(CarBooking.from_dict(item))
+        for booking_data in data:
+            booking_type = booking_data.get("type")
+            if booking_type == "flight":
+                booking = FlightBooking.from_dict(booking_data)
+            elif booking_type == "hotel":
+                booking = HotelBooking.from_dict(booking_data)
+            elif booking_type == "car":
+                booking = CarBooking.from_dict(booking_data)
+            else:
+                raise ValueError(f"Nieznany typ rezerwacji: {booking_type}")
+            self.bookings.append(booking)
+

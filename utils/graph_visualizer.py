@@ -9,7 +9,6 @@ from utils.storm_manager import add_storm, remove_expired_storms
 from patterns.memento import BookingHistory
 
 
-
 class FlightGraphVisualizer:
     def __init__(self, booking_service):
         self.booking_service = booking_service
@@ -42,7 +41,7 @@ class FlightGraphVisualizer:
 
         # Jeśli pozycje węzłów nie zostały jeszcze obliczone, oblicz je raz
         if self.pos is None:
-            self.pos = nx.spring_layout(self.G, k=0.6, iterations=30)
+            self.pos = nx.spring_layout(self.G, k=0.5, iterations=50)
 
     def _draw_graph(self):
         """Rysuje graf na podstawie zaktualizowanych danych."""
@@ -62,7 +61,7 @@ class FlightGraphVisualizer:
 
     def _handle_key_press(self, event):
         """Obsługuje zdarzenia klawiatury."""
-        if event.key == "s":
+        if event.key == "e":
             self._save_state()
         elif event.key == "w":
             self._load_state()
