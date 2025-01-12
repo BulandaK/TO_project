@@ -1,16 +1,15 @@
 from adapters.car_adapter import CarAdapter
-from patterns.state import PendingState
+from patterns.state import PendingState, ConfirmedState, CancelledState
 from services.booking import Booking
-
 
 class CarService:
     def __init__(self):
         self.adapter = CarAdapter()
 
     def book_car(self, car_name, pick_up_date, drop_off_date):
-        booking_info = self.adapter.book_car(car_name, pick_up_date, drop_off_date)
-        car_booking = CarBooking(booking_info["booking_id"], car_name, pick_up_date, drop_off_date)
-        car_booking.set_state(PendingState(car_booking))
+        booking_id = "CAR001"  # Przykładowy identyfikator rezerwacji
+        car_booking = CarBooking(booking_id, car_name, pick_up_date, drop_off_date)
+        car_booking.set_state(PendingState())
         return car_booking
 
 class CarBooking(Booking):
@@ -20,15 +19,8 @@ class CarBooking(Booking):
         self.pick_up_date = pick_up_date
         self.drop_off_date = drop_off_date
 
-    def set_status(self, status):
-        self.status = status
-
-    def set_state(self, state):
-        self.state = state
-        self.state.handle()
-
     def description(self):
-        return f"Samochód {self.car_name} ({self.pick_up_date} - {self.drop_off_date}), Status: {self.status}"
+        return f"Samochód {self.car_name} ({self.pick_up_date} - {self.drop_off_date}), Status: {self.state.__class__.__name__.replace('State', '')}"
 
     def to_dict(self):
         data = super().to_dict()
@@ -42,4 +34,22 @@ class CarBooking(Booking):
 
     @staticmethod
     def from_dict(data):
-        return CarBooking(data["booking_id"], data["car_name"], data["pick_up_date"], data["drop_off_date"])
+        booking = CarBooking(
+            data["booking_id"],
+            data["car_name"],
+            data["pick_up_date"],
+            data["drop_off_date"]
+        )
+
+        state_map = {
+            "Pending": PendingState,
+            "Confirmed": ConfirmedState,
+            "Cancelled": CancelledState,
+        }
+
+        if data["status"] in state_map:
+            booking.set_state(state_map[data["status"]]())
+        else:
+            raise ValueError(f"Nieznany status: {data['status']}")
+
+        return booking

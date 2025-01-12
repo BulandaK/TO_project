@@ -1,7 +1,6 @@
 from adapters.hotel_adapter import HotelAdapter
-from patterns.state import PendingState
+from patterns.state import PendingState, ConfirmedState, CancelledState
 from services.booking import Booking
-
 
 class HotelService:
     def __init__(self):
@@ -10,7 +9,7 @@ class HotelService:
     def book_hotel(self, hotel_name, check_in, check_out):
         booking_info = self.adapter.book_hotel(hotel_name, check_in, check_out)
         hotel_booking = HotelBooking(booking_info["booking_id"], hotel_name, check_in, check_out)
-        hotel_booking.set_state(PendingState(hotel_booking))
+        hotel_booking.set_state(PendingState())
         return hotel_booking
 
 class HotelBooking(Booking):
@@ -20,15 +19,8 @@ class HotelBooking(Booking):
         self.check_in = check_in
         self.check_out = check_out
 
-    def set_status(self, status):
-        self.status = status
-
-    def set_state(self, state):
-        self.state = state
-        self.state.handle()
-
     def description(self):
-        return f"Hotel {self.hotel_name} ({self.check_in} - {self.check_out}), Status: {self.status}"
+        return f"Hotel {self.hotel_name} ({self.check_in} - {self.check_out}), Status: {self.state.__class__.__name__.replace('State', '')}"
 
     def to_dict(self):
         data = super().to_dict()
@@ -42,4 +34,22 @@ class HotelBooking(Booking):
 
     @staticmethod
     def from_dict(data):
-        return HotelBooking(data["booking_id"], data["hotel_name"], data["check_in"], data["check_out"])
+        booking = HotelBooking(
+            data["booking_id"],
+            data["hotel_name"],
+            data["check_in"],
+            data["check_out"]
+        )
+
+        state_map = {
+            "Pending": PendingState,
+            "Confirmed": ConfirmedState,
+            "Cancelled": CancelledState,
+        }
+
+        if data["status"] in state_map:
+            booking.set_state(state_map[data["status"]]())
+        else:
+            raise ValueError(f"Nieznany status: {data['status']}")
+
+        return booking

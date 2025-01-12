@@ -1,18 +1,37 @@
 class BookingState:
-    def __init__(self, booking):
-        self.booking = booking
-
-    def handle(self):
+    """Interfejs dla stanów rezerwacji."""
+    def handle(self, booking):
         raise NotImplementedError
 
+    def change_state(self, booking, new_state):
+        booking.set_state(new_state)
+
+
 class PendingState(BookingState):
-    def handle(self):
-        self.booking.set_status("Oczekująca")
+    """Stan: Oczekująca."""
+    def handle(self, booking):
+        print(f"Rezerwacja {booking.booking_id} jest w stanie: Oczekująca. Oczekuje na potwierdzenie.")
+
+    def confirm(self, booking):
+        print(f"Rezerwacja {booking.booking_id} została potwierdzona.")
+        self.change_state(booking, ConfirmedState())
+
+    def cancel(self, booking):
+        print(f"Rezerwacja {booking.booking_id} została anulowana.")
+        self.change_state(booking, CancelledState())
+
 
 class ConfirmedState(BookingState):
-    def handle(self):
-        self.booking.set_status("Potwierdzona")
+    """Stan: Potwierdzona."""
+    def handle(self, booking):
+        print(f"Rezerwacja {booking.booking_id} jest w stanie: Potwierdzona.")
+
+    def cancel(self, booking):
+        print(f"Rezerwacja {booking.booking_id} została anulowana po potwierdzeniu.")
+        self.change_state(booking, CancelledState())
+
 
 class CancelledState(BookingState):
-    def handle(self):
-        self.booking.set_status("Anulowana")
+    """Stan: Anulowana."""
+    def handle(self, booking):
+        print(f"Rezerwacja {booking.booking_id} jest w stanie: Anulowana. Nie można już jej zmienić.")

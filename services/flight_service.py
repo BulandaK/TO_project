@@ -1,22 +1,16 @@
 from adapters.flight_adapter import FlightAdapter
-from patterns.state import PendingState
+from patterns.state import PendingState, ConfirmedState, CancelledState
 from services.booking import Booking
-
 
 class FlightService:
     def __init__(self):
         self.adapter = FlightAdapter()
 
     def book_flight(self, origin, destination, date):
-        available_flights = self.adapter.search_flights(origin, destination, date)
-        if available_flights:
-            flight_id = available_flights[0]["flight"]
-            booking_info = self.adapter.book_flight(flight_id)
-            flight_booking = FlightBooking(booking_info["booking_id"], origin, destination, date)
-            flight_booking.set_state(PendingState(flight_booking))
-            return flight_booking
-        return None
-
+        flight_id = "FLIGHT001"  # Przykładowy identyfikator rezerwacji
+        flight_booking = FlightBooking(flight_id, origin, destination, date)
+        flight_booking.set_state(PendingState())  # Ustaw stan na "Oczekująca"
+        return flight_booking
 
 class FlightBooking(Booking):
     def __init__(self, booking_id, origin, destination, date, status="Oczekująca"):
@@ -24,16 +18,6 @@ class FlightBooking(Booking):
         self.origin = origin
         self.destination = destination
         self.date = date
-
-    def set_status(self, status):
-        self.status = status
-
-    def set_state(self, state):
-        self.state = state
-        self.state.handle()
-
-    def description(self):
-        return f"Lot {self.origin} -> {self.destination} ({self.date}), Status: {self.status}"
 
     def to_dict(self):
         data = super().to_dict()
@@ -47,4 +31,25 @@ class FlightBooking(Booking):
 
     @staticmethod
     def from_dict(data):
-        return FlightBooking(data["booking_id"], data["origin"], data["destination"], data["date"])
+        # Tworzenie obiektu FlightBooking
+        booking = FlightBooking(
+            data["booking_id"],
+            data["origin"],
+            data["destination"],
+            data["date"]
+        )
+
+        # Mapowanie nazw statusów na klasy stanów
+        state_map = {
+            "Pending": PendingState,
+            "Confirmed": ConfirmedState,
+            "Cancelled": CancelledState,
+        }
+
+        # Ustawienie odpowiedniego stanu na podstawie "status"
+        if data["status"] in state_map:
+            booking.set_state(state_map[data["status"]]())
+        else:
+            raise ValueError(f"Nieznany status: {data['status']}")
+
+        return booking
