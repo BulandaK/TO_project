@@ -1,0 +1,122 @@
+[
+    {
+        "booking_id": "FLIGHT001",
+        "type": "flight",
+        "origin": "Warszawa",
+        "destination": "Nowy Jork",
+        "date": "2025-03-15",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT002",
+        "type": "flight",
+        "origin": "Paryż",
+        "destination": "Londyn",
+        "date": "2025-06-18",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT003",
+        "type": "flight",
+        "origin": "Tokio",
+        "destination": "Berlin",
+        "date": "2025-09-12",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT004",
+        "type": "flight",
+        "origin": "Rzym",
+        "destination": "Madryt",
+        "date": "2025-11-21",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT005",
+        "type": "flight",
+        "origin": "Los Angeles",
+        "destination": "Sydney",
+        "date": "2025-02-14",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT006",
+        "type": "flight",
+        "origin": "Toronto",
+        "destination": "Singapur",
+        "date": "2025-04-07",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT007",
+        "type": "flight",
+        "origin": "Moskwa",
+        "destination": "Hongkong",
+        "date": "2025-05-30",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT008",
+        "type": "flight",
+        "origin": "Rio de Janeiro",
+        "destination": "Warszawa",
+        "date": "2025-07-19",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT009",
+        "type": "flight",
+        "origin": "Londyn",
+        "destination": "Nowy Jork",
+        "date": "2025-10-02",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT010",
+        "type": "flight",
+        "origin": "Sydney",
+        "destination": "Berlin",
+        "date": "2025-12-25",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT011",
+        "type": "flight",
+        "origin": "Paryż",
+        "destination": "Tokio",
+        "date": "2025-01-08",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT012",
+        "type": "flight",
+        "origin": "Hongkong",
+        "destination": "Rzym",
+        "date": "2025-08-05",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT013",
+        "type": "flight",
+        "origin": "Berlin",
+        "destination": "Los Angeles",
+        "date": "2025-03-22",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT014",
+        "type": "flight",
+        "origin": "Singapur",
+        "destination": "Toronto",
+        "date": "2025-09-10",
+        "status": "Pending"
+    },
+    {
+        "booking_id": "FLIGHT015",
+        "type": "flight",
+        "origin": "Warszawa",
+        "destination": "Moskwa",
+        "date": "2025-07-28",
+        "status": "Pending"
+    }
+]

@@ -1,4 +1,7 @@
 from patterns.observer import Observable
+from patterns.state import PendingState
+from services.flight_service import FlightBooking
+
 
 class BookingService(Observable):
     def __init__(self):
@@ -12,6 +15,11 @@ class BookingService(Observable):
     def list_bookings(self):
         for booking in self.bookings:
             print(booking.description())
+
+    def list_pending_flights(self):
+        """Zwraca listę lotów w stanie Oczekująca."""
+        return [booking for booking in self.bookings if
+                isinstance(booking, FlightBooking) and isinstance(booking.state, PendingState)]
 
     def to_dict(self):
         """Zapisuje stan wszystkich rezerwacji."""

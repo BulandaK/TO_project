@@ -1,39 +1,37 @@
+from patterns.observer import NotificationSystem
 from services.booking_service import BookingService
 from services.flight_service import FlightService
 from services.hotel_service import HotelService
 from services.car_service import CarService
 from patterns.memento import BookingHistory
+from utils.storm_generator import generate_storm
+
 
 def main():
     # Tworzenie usług
-    flight_service = FlightService()
-    hotel_service = HotelService()
-    car_service = CarService()
     booking_service = BookingService()
+    flight_service = FlightService()
 
-    # Rezerwacja lotu
-    flight_booking = flight_service.book_flight("Warszawa", "Nowy Jork", "2025-01-15")
-    flight_booking.handle()
-    flight_booking.confirm()
-    flight_booking.handle()
+    # Dodanie systemu powiadomień jako obserwatora
+    notification_system = NotificationSystem()
+    booking_service.add_observer(notification_system)
 
-    # Rezerwacja hotelu
-    hotel_booking = hotel_service.book_hotel("Hilton", "2025-01-15", "2025-01-20")
-    hotel_booking.handle()
+    # Wczytanie lotów z JSON i dodanie ich do BookingService
+    print("\n=== Wczytywanie lotów z pliku JSON ===")
+    flight_iterator = flight_service.load_flights_from_json("flights.json")
+    for flight_booking in flight_iterator:
+        booking_service.add_booking(flight_booking)
 
-    # Rezerwacja samochodu
-    car_booking = car_service.book_car("Toyota", "2025-01-15", "2025-01-20")
-    car_booking.handle()
-    car_booking.cancel()
-    car_booking.handle()
+    # Wyświetlenie wszystkich rezerwacji
+    print("\n=== Wszystkie rezerwacje ===")
+    booking_service.list_bookings()
 
-    # Dodanie rezerwacji do systemu
-    booking_service.add_booking(flight_booking)
-    booking_service.add_booking(hotel_booking)
-    booking_service.add_booking(car_booking)
+    # Generowanie burzy
+    print("\n=== Generowanie burzy ===")
+    generate_storm(booking_service)
 
-    # Wyświetlenie stanu rezerwacji
-    print("\n=== Rezerwacje ===")
+    # Wyświetlenie rezerwacji po burzy
+    print("\n=== Rezerwacje po burzy ===")
     booking_service.list_bookings()
 
     # Zapis stanu
@@ -42,8 +40,7 @@ def main():
 
     # Symulacja zmiany statusu
     print("\n=== Aktualizacja rezerwacji ===")
-    flight_booking.cancel()
-    hotel_booking.cancel()
+
 
     # Powiadomienia
     booking_service.notify_observers("Status rezerwacji został zmieniony.")

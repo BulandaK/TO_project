@@ -1,6 +1,10 @@
+import json
+
 from adapters.flight_adapter import FlightAdapter
 from patterns.state import PendingState, ConfirmedState, CancelledState
 from services.booking import Booking
+from utils.flight_iterator import FlightIterator
+
 
 class FlightService:
     def __init__(self):
@@ -11,6 +15,24 @@ class FlightService:
         flight_booking = FlightBooking(flight_id, origin, destination, date)
         flight_booking.set_state(PendingState())  # Ustaw stan na "Oczekująca"
         return flight_booking
+    @staticmethod
+    def load_flights_from_json(file_name):
+        """Wczytuje loty z pliku JSON i zwraca iterator obiektów FlightBooking."""
+        with open(file_name, "r", encoding="utf-8") as file:
+            flight_data = json.load(file)
+
+        flights = [
+            FlightBooking(
+                flight["booking_id"],
+                flight["origin"],
+                flight["destination"],
+                flight["date"],
+                status=flight["status"]
+            )
+            for flight in flight_data
+        ]
+        return FlightIterator(flights)
+
 
 class FlightBooking(Booking):
     def __init__(self, booking_id, origin, destination, date, status="Oczekująca"):
