@@ -9,6 +9,7 @@ from utils.storm_manager import add_storm, remove_expired_storms
 from patterns.memento import BookingHistory
 
 
+
 class FlightGraphVisualizer:
     def __init__(self, booking_service):
         self.booking_service = booking_service
@@ -41,7 +42,7 @@ class FlightGraphVisualizer:
 
         # Jeśli pozycje węzłów nie zostały jeszcze obliczone, oblicz je raz
         if self.pos is None:
-            self.pos = nx.spring_layout(self.G, k=0.5, iterations=50)
+            self.pos = nx.spring_layout(self.G, k=0.6, iterations=30)
 
     def _draw_graph(self):
         """Rysuje graf na podstawie zaktualizowanych danych."""
@@ -84,8 +85,9 @@ class FlightGraphVisualizer:
 
     def update(self, frame):
         """Funkcja aktualizująca graf co interwał."""
-        # Dodaj nową burzę i usuń wygasłe
+        # Dodaj nową burzę
         add_storm(self.booking_service, self.active_storms, duration=10)
+        # Usuń wygasłe burze i przywróć stan lotów
         remove_expired_storms(self.active_storms, self.booking_service)
 
         # Aktualizuj graf i rysuj
